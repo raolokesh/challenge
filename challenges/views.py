@@ -1,6 +1,9 @@
 from django.shortcuts import render
-from django.http import HttpResponse , HttpResponseNotFound , HttpResponseRedirect
+from django.http import Http404 , HttpResponseNotFound , HttpResponseRedirect
 from django.urls import reverse
+
+
+# from django.template.loader import render_to_string
 # Create your views here.
 
 # def index(request):
@@ -25,7 +28,7 @@ monthly_challenges = {
     "september": "this is the september",
     "october": "this is the october month",
     "november": "this is the november month",
-    "december": "this is the december month"
+    "december": None
 }
 
 def monthly_challenge_by_number(request , month):
@@ -54,11 +57,16 @@ def monthly_challenge_by_number(request , month):
 def monthly_challenge(request, month):
     try:
         challenge_txt = monthly_challenges[month]
-        response_data = f"<h1>{challenge_txt}</h1>"
-    except:
-        return HttpResponseNotFound("enter correct month")
-    return HttpResponse(response_data)
+        # response_data = render_to_string("challenges/challenge.html")
+        return render(request , "challenges/challenge.html" , {
+            "text" : challenge_txt, 
+            # "title" : month.capitalize(),
+             "title" : month,
 
+        })
+    except:
+        # return HttpResponseNotFound("enter correct month")
+        raise Http404()
 
 def index(request):
     # response_data = """<h2>
@@ -79,12 +87,16 @@ def index(request):
     # </h2>
     # """
 
-    list_items = ""
-    month_list = list(monthly_challenges.keys())
-    for month in month_list:
-        capitalized_month = month.capitalize()
-        month_path = reverse("monthly-challenge",args=[month])
-        list_items += f"<h2><li><a href = {month_path}> {capitalized_month} </a></li></h2>"
+    # list_items = ""
+    # month_list = list(monthly_challenges.keys())
+    # for month in month_list:
+    #     capitalized_month = month.capitalize()
+    #     month_path = reverse("monthly-challenge",args=[month])
+    #     list_items += f"<h2><li><a href = {month_path}> {capitalized_month} </a></li></h2>"
     
-    response_data = f"<ul>{list_items}</ul>"
-    return HttpResponse(response_data)
+    # response_data = f"<ul>{list_items}</ul>"
+    # return HttpResponse(response_data)
+    month_list = list(monthly_challenges.keys())
+    return render(request , "challenges/index.html",{
+                      "months" : month_list,
+                  })

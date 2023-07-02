@@ -3,5 +3,5 @@
         "ms-python.vscode-pylance"
     ],
 
-    "python.languageServer": "pylance"
+    "python.languageServer": "Pylance"
 }
